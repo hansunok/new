@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>공연 안내</title>
+  <link rel="stylesheet" href="css/site.css?v=5">
+  <style>.site-header{color:var(--ink);background:rgba(255,255,255,.95);padding-block:16px;border-bottom:1px solid var(--line)}</style>
+</head>
+<body>
+  <header class="site-header"><a class="wordmark" href="index.html" id="logo">Home</a></header>
+  <main class="event-page">
+    <img id="poster" alt="" hidden>
+    <h1 id="title"></h1>
+    <p id="when" class="field"></p>
+    <p id="venue"></p>
+    <p id="desc" style="white-space:pre-wrap"></p>
+    <p><a id="link" class="text-link" hidden target="_blank" rel="noopener">예매/자세히 보기</a></p>
+    <p id="msg" class="muted"></p>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/event.js"></script>
+</body>
+</html>

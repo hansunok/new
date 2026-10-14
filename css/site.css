@@ -1,0 +1,128 @@
+/* 공개 홈페이지 스타일 (관리자는 style.css 사용) — chae-hoonsun-markup 시안의 구조·분위기 적용 */
+:root{
+  --ink:#1d1b1a;--muted:#77716e;--paper:#f6f4f1;--white:#fff;--wine:#6c2937;--line:rgba(29,27,26,.16);
+  --serif:"Iowan Old Style","Bodoni 72","Times New Roman","Nanum Myeongjo",serif;
+  --sans:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:var(--white);font-family:var(--sans);line-height:1.7}
+a{color:inherit;text-decoration:none}
+button{color:inherit;font:inherit}
+.muted{color:var(--muted)}
+
+/* 첫 로딩: 인트로(히어로)가 준비될 때까지 중립 검정 화면 유지 → 준비되면 부드럽게 표시 */
+html:not(.ready) body{background:#0f0e0e}
+html:not(.ready) main>section:not(.hero),html:not(.ready) footer{visibility:hidden}
+.hero-copy,.scroll-cue{opacity:0;transition:opacity .8s ease .1s}
+html.ready .hero-copy,html.ready .scroll-cue{opacity:1}
+
+/* 헤더 */
+.site-header{position:fixed;inset:0 0 auto;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:23px 5.5vw;color:#fff;transition:background .3s,color .3s,padding .3s}
+.site-header.is-solid{padding-block:16px;color:var(--ink);background:rgba(255,255,255,.95);backdrop-filter:blur(12px)}
+.wordmark{font:700 22px/1 var(--serif);letter-spacing:.13em;text-transform:uppercase}
+.nav{display:flex;align-items:center;gap:clamp(18px,2.6vw,42px);font-size:11px;letter-spacing:.15em;text-transform:uppercase}
+.nav a{opacity:.88;transition:opacity .2s}
+.nav a:hover{opacity:.55}
+.menu-toggle{display:none;border:0;background:none;cursor:pointer;font-size:24px}
+
+/* 히어로 */
+.hero{position:relative;min-height:max(640px,100svh);display:grid;place-items:center;color:#fff;text-align:center;isolation:isolate;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 20%,#2a2827 0%,#171514 55%,#0f0e0e 100%)}
+.hero-photo-turn{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center 40%;background-repeat:no-repeat}
+html.ready .hero-photo-turn{animation:heroPhotoFade 5.5s ease-in-out .6s forwards}
+.hero.has-photo{background-size:cover;background-position:center 40%;background-repeat:no-repeat}
+@keyframes heroPhotoFade{0%{opacity:1;filter:blur(0)}82%{opacity:.22;filter:blur(1px)}100%{opacity:0;filter:blur(2px)}}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(13,12,12,.2),rgba(13,12,12,.55))}
+.hero-copy{position:relative;z-index:2;width:min(100% - 40px,1000px);padding-top:48px}
+.eyebrow{margin:0 0 21px;font-size:11px;letter-spacing:.28em;text-transform:uppercase}
+.hero h1{margin:0;font:400 clamp(44px,9vw,120px)/1 var(--serif);letter-spacing:.03em;word-break:keep-all}
+.hero-sub{margin:26px 0 0;font-size:clamp(13px,1.8vw,21px);letter-spacing:.3em}
+.hero-note{margin:34px 0 0;font-size:14px;letter-spacing:.12em}
+.hero .text-link{margin-top:40px;border-color:rgba(255,255,255,.7)}
+.scroll-cue{position:absolute;z-index:2;bottom:30px;left:50%;display:grid;justify-items:center;gap:10px;transform:translateX(-50%);font-size:9px;letter-spacing:.2em}
+.scroll-cue::after{content:"";height:42px;border-left:1px solid rgba(255,255,255,.6)}
+
+/* 공통 섹션 */
+.kicker{margin:0 0 14px;color:var(--wine);font-size:10px;letter-spacing:.24em;text-transform:uppercase}
+.section{padding:clamp(80px,10vw,135px) 7vw}
+.section.paper{background:var(--paper)}
+.section-head{margin-bottom:48px}
+.section-head h2{margin:0;font-size:clamp(32px,5vw,62px);line-height:1.05;font-weight:500;letter-spacing:-.05em}
+.text-link{display:inline-flex;align-items:center;gap:14px;padding-bottom:8px;border:0;border-bottom:1px solid currentColor;background:none;cursor:pointer;font-size:12px;letter-spacing:.08em;white-space:nowrap}
+.text-link::after{content:"↗";font-size:16px}
+
+/* 소개 */
+.bio-layout{display:block}
+.bio-copy{max-width:760px}
+.bio-copy .tagline{margin:0 0 20px;font:400 clamp(24px,3.6vw,42px)/1.35 var(--serif)}
+.bio-copy p{color:#625d59;font-size:15px;line-height:2.05;white-space:pre-wrap}
+.bio-copy h3{margin:34px 0 10px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--wine);font-weight:500}
+.bio-copy ul{margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.bio-copy li{padding:13px 0;border-bottom:1px solid var(--line);font-size:14px}
+
+/* 레슨 안내 카드 */
+.performance-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.performance-grid .card{min-height:300px;display:flex;flex-direction:column;justify-content:space-between;gap:26px;padding:28px;background:var(--white);border:0;border-radius:0}
+.performance-grid .card:nth-child(3n+2){background:var(--wine);color:#fff}
+.performance-grid .card:nth-child(3n){background:#302d2a;color:#fff}
+.performance-grid .card h3{margin:0;font-size:clamp(24px,3vw,36px);font-weight:500;letter-spacing:-.04em}
+.performance-grid .card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13px;line-height:1.7}
+.performance-grid .card dt{opacity:.6;letter-spacing:.08em}
+.performance-grid .card dd{margin:0}
+
+/* 공연·공지 목록 */
+.list .item{padding:26px 0;border-bottom:1px solid var(--line)}
+.list{border-top:1px solid var(--line)}
+.list .item strong{display:block;font:400 clamp(20px,2.4vw,26px)/1.35 var(--serif)}
+.list .item .muted{font-size:12px;letter-spacing:.04em;margin-top:4px}
+.list .item p{margin:10px 0 0;color:#625d59;font-size:14px;line-height:1.9}
+.list .item a{display:inline-block;margin-top:10px;font-size:12px;letter-spacing:.08em;border-bottom:1px solid currentColor}
+.list .item img{max-width:340px;width:100%}
+
+/* 영상 */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.cards .card h3{margin:14px 0 4px;font:400 20px var(--serif)}
+.cards .card p{margin:0;font-size:13px}
+.cards iframe,.cards img{width:100%;border:0;aspect-ratio:16/9;object-fit:cover;background:#1b1817}
+
+.more{margin:40px 0 0;text-align:center}
+.more .text-link{color:var(--ink)}
+
+/* 신청 (와인 배경 영역) */
+.apply{background:var(--wine);color:#fff}
+.apply .kicker{color:#e4c7cd}
+.apply .section-head p{margin:14px 0 0;color:rgba(255,255,255,.75);font-size:14px}
+.form{display:grid;gap:16px;max-width:620px}
+.form label{display:grid;gap:6px;font-size:12px;letter-spacing:.06em}
+.form input,.form select,.form textarea{font:inherit;font-size:14px;padding:12px;border:1px solid rgba(255,255,255,.35);border-radius:0;background:rgba(255,255,255,.96);color:var(--ink)}
+.form label.check{display:flex;gap:8px;align-items:center;font-size:12px}
+.form .text-link{justify-self:start;color:#fff}
+#applyMsg{margin:0;color:rgba(255,255,255,.8);font-size:13px}
+
+/* 푸터 */
+footer{padding:44px 5.5vw;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;color:#ddd8d2;background:#181716;font-size:11px;letter-spacing:.04em}
+footer .wordmark{color:#fff;font-size:16px}
+footer #contactLinks{display:flex;gap:22px;flex-wrap:wrap}
+footer #contactLinks a{border-bottom:1px solid rgba(255,255,255,.4)}
+footer a:hover{opacity:.7}
+
+/* 공연 안내 페이지 */
+.event-page{max-width:720px;margin:0 auto;padding:130px 24px 90px}
+.event-page img{width:100%;margin-bottom:28px}
+.event-page h1{margin:0 0 10px;font:400 clamp(28px,5vw,46px)/1.25 var(--serif)}
+.event-page .field{color:var(--wine);letter-spacing:.04em}
+
+@media (max-width:760px){
+      .site-header{padding:20px 22px}
+  .wordmark{font-size:18px}
+  .menu-toggle{display:block}
+  .nav{display:none;position:absolute;top:58px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;padding:12px 23px 20px;color:var(--ink);background:#fff}
+  .nav.is-open{display:flex}
+  .nav a{padding:13px 0;border-bottom:1px solid var(--line)}
+  .section{padding:76px 24px}
+  .hero{min-height:620px}
+  footer{flex-direction:column;align-items:flex-start;padding:30px 24px}
+}
+@media (prefers-reduced-motion:reduce){.hero-photo-turn{animation:none!important;opacity:0}html{scroll-behavior:auto}*{transition-duration:.01ms!important}}

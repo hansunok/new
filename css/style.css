@@ -1,0 +1,60 @@
+:root{color-scheme:light;--bg:#fff;--fg:#222;--muted:#6b7280;--accent:#2563eb;--alt:#f7f8fa;--line:#e5e7eb}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font-family:system-ui,"Malgun Gothic",sans-serif;background:var(--bg);color:var(--fg);line-height:1.65}
+a{color:var(--accent)}
+.nav{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--bg);border-bottom:1px solid var(--line);z-index:5;flex-wrap:wrap;gap:8px}
+.nav nav{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.nav nav a{text-decoration:none;color:var(--fg)}
+.logo{font-weight:700;text-decoration:none;color:var(--fg)}
+.hero{text-align:center;padding:96px 20px;background:#f3f4f6;color:var(--fg)}
+.hero h1{font-size:clamp(2rem,6vw,3.2rem);margin:0 0 8px}
+.hero p{margin:0 0 24px;font-size:1.15rem;opacity:.9}
+.wrap{padding:56px max(20px,calc((100% - 960px)/2))}
+.alt{background:var(--alt)}
+h2{margin-top:0}
+.field{color:var(--accent);font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h3{margin:0 0 8px}
+.card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.card dt{color:var(--muted)}.card dd{margin:0}
+.card iframe,.card img{width:100%;border:0;border-radius:8px;aspect-ratio:16/9;object-fit:cover}
+.btn{display:inline-block;background:var(--accent);color:#fff!important;border:0;border-radius:8px;padding:12px 22px;font-size:1rem;cursor:pointer;text-decoration:none}
+.btn.small{padding:6px 14px}
+.btn.ghost{background:transparent;color:var(--accent)!important;border:1px solid var(--accent)}
+.form{display:grid;gap:14px;max-width:560px}
+label{display:grid;gap:4px;font-weight:600;font-size:.95rem}
+input,select,textarea{font:inherit;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+label.check{display:flex;gap:8px;align-items:center;font-weight:400}
+.muted{color:var(--muted)}
+.list .item{padding:12px 0;border-bottom:1px solid var(--line)}
+footer{text-align:center;padding:32px 20px;border-top:1px solid var(--line)}
+footer #contactLinks{display:flex;gap:16px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+/* admin */
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tabs button.on{background:var(--accent);color:#fff}
+.tabs button{padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
+.scroll{overflow-x:auto}
+.badge{display:inline-block;padding:1px 8px;border-radius:99px;background:var(--alt);border:1px solid var(--line);font-size:.8rem}
+.views{display:flex;gap:8px;margin:12px 0}
+.views button{padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
+.views button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line);min-width:780px}
+.cal .dow{background:var(--alt);text-align:center;font-weight:600;padding:6px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cal .day{min-height:96px;padding:4px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer}
+.cal .day.other{background:var(--alt);color:var(--muted)}
+.cal .day.today .num{background:var(--accent);color:#fff;border-radius:99px;padding:0 6px}
+.cal .num{font-size:.85rem}
+.chip{display:block;margin-top:3px;padding:1px 6px;border-radius:4px;font-size:.78rem;line-height:1.4;background:#dbeafe;color:#1e3a8a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.chip.attended{background:#dcfce7;color:#14532d}
+.chip.late{background:#fef9c3;color:#713f12}
+.chip.absent{background:#fee2e2;color:#7f1d1d}
+.chip.cancelled,.chip.rescheduled{background:#e5e7eb;color:#4b5563;text-decoration:line-through}
+.chip.makeup{outline:1px dashed #1e3a8a}
+/* 관리자: 입력 영역(패널)과 목록 구분 */
+#studentForm,#lessonForm,#eventForm,#videoForm,#noticeForm,#reviewForm{background:var(--alt);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:10px;padding:18px 20px 20px;margin:12px 0 8px}
+.panel-title{grid-column:1/-1;margin:0 0 2px;font-size:1rem;color:var(--accent)}
+.list-title{margin:30px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--fg);font-size:1rem}

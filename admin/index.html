@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>레슨 관리</title>
+  <link rel="stylesheet" href="../css/style.css?v=4">
+  <link rel="stylesheet" href="../css/admin.css?v=2">
+</head>
+<body>
+  <header class="nav"><strong id="brand">레슨 관리</strong><span><span id="who" class="muted"></span> <button id="logout" class="btn small ghost" hidden>로그아웃</button></span></header>
+
+  <main class="wrap">
+    <form id="login" class="form" hidden>
+      <h2>로그인</h2>
+      <label>이메일<input type="email" name="email" required autocomplete="username"></label>
+      <label>비밀번호<input type="password" name="password" required autocomplete="current-password"></label>
+      <div><button class="btn">로그인</button> <button type="button" id="signup" class="btn ghost">새 아티스트 가입</button></div>
+      <p class="muted">처음이라면 이메일과 비밀번호(6자 이상)를 입력하고 '새 아티스트 가입'을 누르세요. 가입 후 나만의 홈페이지 주소를 만들 수 있습니다.</p>
+      <p id="loginMsg" class="muted" role="status"></p>
+    </form>
+
+    <form id="onboard" class="form" hidden>
+      <h2>내 홈페이지 만들기</h2>
+      <label>활동명 *<input name="name" required maxlength="50"></label>
+      <label>홈페이지 주소 *<input name="slug" required maxlength="30" pattern="[a-z0-9][a-z0-9\-]{2,29}" placeholder="예: kim-vocal" autocapitalize="off">
+        <small class="muted">영문 소문자·숫자·하이픈, 3~30자. 나중에 바꾸면 기존 링크가 끊깁니다.</small></label>
+      <button class="btn">만들기</button>
+      <p id="onboardMsg" class="muted" role="status"></p>
+    </form>
+
+    <div id="pendingBox" class="card" hidden>
+      <h2 id="pendingTitle"></h2>
+      <p id="pendingText"></p>
+    </div>
+
+    <details id="platformBox" class="card" style="margin-bottom:16px" hidden open>
+      <summary><strong>플랫폼 관리 · 아티스트 승인</strong> <span id="pendingCount" class="badge"></span></summary>
+      <div class="scroll"><table>
+        <thead><tr><th>가입일</th><th>활동명</th><th>주소</th><th>이메일</th><th>상태</th><th></th></tr></thead>
+        <tbody id="platformBody"></tbody></table></div>
+    </details>
+
+    <div id="app" hidden>
+      <div class="tabs">
+        <button data-tab="inquiries" class="on">신청·상담 <span id="newCount" class="badge"></span></button>
+        <button data-tab="students">수강생</button>
+        <button data-tab="schedule">일정·출결</button>
+        <button data-tab="events">공연</button>
+        <button data-tab="videos">영상</button>
+        <button data-tab="notices">공지·후기</button>
+        <button data-tab="send">메시지 발송</button>
+        <button data-tab="site">사이트 정보</button>
+        <button data-tab="settings">홈페이지 설정</button>
+      </div>
+
+      <section id="tab-events" hidden>
+        <p class="muted">여기서 등록한 공연은 홈페이지 '공연 일정'에 바로 표시됩니다.</p>
+        <form id="eventForm" class="form" style="max-width:none;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+          <h4 class="panel-title">공연 등록 · 수정</h4>
+          <input type="hidden" name="id">
+          <label>공연명 *<input name="title" required></label>
+          <label>일시 *<input type="datetime-local" name="starts_at" required></label>
+          <label>장소<input name="venue"></label>
+          <label>예매/안내 링크<input type="url" name="link_url" placeholder="https://"></label>
+          <label style="grid-column:1/-1">소개<textarea name="description" rows="2"></textarea></label>
+          <label>포스터 이미지<input type="file" name="image" accept="image/*"></label>
+          <div id="eventImgPreview"></div>
+          <label class="check"><input type="checkbox" name="published" checked> 홈페이지에 공개</label>
+          <div><button class="btn">저장</button> <button type="button" id="eventReset" class="btn ghost">새로 입력</button></div>
+        </form>
+        <h4 class="list-title">등록된 공연</h4>
+        <div class="scroll"><table><thead><tr><th>일시</th><th>공연명</th><th>장소</th><th>공개</th><th></th></tr></thead><tbody id="eventBody"></tbody></table></div>
+      </section>
+
+      <section id="tab-videos" hidden>
+        <p class="muted">유튜브 주소를 입력하면 홈페이지 '포트폴리오 · 공연 영상'에서 재생됩니다.</p>
+        <form id="videoForm" class="form" style="max-width:none;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+          <h4 class="panel-title">영상 등록 · 수정</h4>
+          <input type="hidden" name="id">
+          <label>제목 *<input name="title" required></label>
+          <label>유튜브 주소 *<input name="youtube_url" required placeholder="https://www.youtube.com/watch?v=..."></label>
+          <label>정렬 순서<input type="number" name="sort_order" value="0"></label>
+          <label style="grid-column:1/-1">설명<textarea name="description" rows="2"></textarea></label>
+          <label class="check"><input type="checkbox" name="published" checked> 홈페이지에 공개</label>
+          <div><button class="btn">저장</button> <button type="button" id="videoReset" class="btn ghost">새로 입력</button></div>
+        </form>
+        <h4 class="list-title">등록된 영상</h4>
+        <div class="scroll"><table><thead><tr><th>미리보기</th><th>제목</th><th>순서</th><th>공개</th><th></th></tr></thead><tbody id="videoBody"></tbody></table></div>
+      </section>
+
+      <section id="tab-notices" hidden>
+        <h3>공지</h3>
+        <p class="muted">공개로 저장한 공지만 홈페이지 '공지'에 표시됩니다. (휴강·모집 안내 등)</p>
+        <form id="noticeForm" class="form" style="max-width:none">
+          <h4 class="panel-title">공지 등록 · 수정</h4>
+          <input type="hidden" name="id">
+          <label>제목 *<input name="title" required></label>
+          <label>내용<textarea name="body" rows="3"></textarea></label>
+          <label class="check"><input type="checkbox" name="published" checked> 홈페이지에 공개</label>
+          <div><button class="btn">저장</button> <button type="button" id="noticeReset" class="btn ghost">새로 입력</button></div>
+        </form>
+        <h4 class="list-title">등록된 공지</h4>
+        <div class="scroll"><table><thead><tr><th>등록일</th><th>제목</th><th>공개</th><th></th></tr></thead><tbody id="noticeBody"></tbody></table></div>
+
+        <h3 style="margin-top:32px">수강 후기</h3>
+        <p class="muted">후기는 기본이 비공개입니다. 내용을 확인하고 '공개'로 바꾸면 홈페이지 '수강 후기'에 표시됩니다.</p>
+        <form id="reviewForm" class="form" style="max-width:none">
+          <h4 class="panel-title">후기 등록 · 수정</h4>
+          <input type="hidden" name="id">
+          <label>작성자 표시 *<input name="author" required placeholder="예: 수강생 김○○ 학부모"></label>
+          <label>후기 내용 *<textarea name="body" rows="3" required></textarea></label>
+          <label class="check"><input type="checkbox" name="published"> 홈페이지에 공개</label>
+          <div><button class="btn">저장</button> <button type="button" id="reviewReset" class="btn ghost">새로 입력</button></div>
+        </form>
+        <h4 class="list-title">등록된 후기</h4>
+        <div class="scroll"><table><thead><tr><th>등록일</th><th>작성자</th><th>내용</th><th>공개</th><th></th></tr></thead><tbody id="reviewBody"></tbody></table></div>
+      </section>
+
+      <section id="tab-send" hidden>
+        <h3>1. 받는 사람</h3>
+        <div id="recipientFilters" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+          <label class="check"><input type="checkbox" data-grp="student" checked> 수강생 본인</label>
+          <label class="check"><input type="checkbox" data-grp="guardian" checked> 보호자</label>
+          <label class="check"><input type="checkbox" data-grp="contact" checked> 지인</label>
+          <button type="button" id="recAll" class="btn small ghost">전체 선택</button>
+          <button type="button" id="recNone" class="btn small ghost">전체 해제</button>
+        </div>
+        <div id="recipientList" class="card" style="max-height:260px;overflow:auto"></div>
+        <details style="margin:12px 0"><summary>지인 연락처 추가</summary>
+          <form id="contactForm" class="form" style="max-width:none;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+            <label>이름 *<input name="name" required></label>
+            <label>전화번호 *<input name="phone" required placeholder="010-0000-0000"></label>
+            <label>관계<input name="relation" placeholder="지인, 팬 등"></label>
+            <div style="align-self:end"><button class="btn">추가</button></div>
+          </form>
+        </details>
+        <h3>2. 공연 선택 · 추가 내용</h3>
+        <p><select id="eventPick"><option value="">공연 선택 (선택 안 하면 추가 내용만 발송)</option></select></p>
+        <label>추가 내용 (선택)<textarea id="msgExtra" rows="3" placeholder="예: 많은 참석 부탁드립니다."></textarea></label>
+        <h3>3. 발송 내용 확인</h3>
+        <div id="msgPreview" class="card"></div>
+        <p class="muted"><span id="msgInfo"></span></p>
+        <p>
+          <button id="copyNumbers" class="btn">번호·내용 복사</button>
+          <button id="openSms" class="btn ghost">내 휴대폰 문자앱으로 열기</button>
+        </p>
+        <p id="sendMsg" class="muted" role="status"></p>
+        <h3>발송 이력</h3>
+        <div class="scroll"><table><thead><tr><th>일시</th><th>상태</th><th>수신자</th><th>내용</th></tr></thead><tbody id="logBody"></tbody></table></div>
+      </section>
+
+      <section id="tab-site" hidden>
+        <p>내 홈페이지: <a id="myUrl" target="_blank" rel="noopener"></a>
+          <button type="button" id="copyUrl" class="btn small ghost">주소 복사</button></p>
+        <form id="siteForm" class="form" style="max-width:720px">
+          <label>활동명 *<input name="name" required maxlength="50"></label>
+          <label>영문 이름<input name="englishName" maxlength="60" placeholder="예: HOON SUN CHAE"></label>
+          <label>홈페이지 이름 표기
+            <select name="nameDisplay"><option value="english">영문 이름으로 표기</option><option value="korean">한글 활동명으로 표기</option></select>
+          </label>
+          <label>닉네임<input name="nickname" maxlength="40" placeholder="예: 첼리스트 (이름 아래 부제로 표시)"></label>
+          <h3>사진</h3>
+          <div id="siteImages"></div>
+          <label>한 줄 소개<input name="tagline" maxlength="100"></label>
+          <label>활동 분야<input name="field" maxlength="100" placeholder="예: 보컬 · 피아노 · 작곡"></label>
+          <label>소개<textarea name="intro" rows="3" maxlength="1000"></textarea></label>
+          <label>레슨 철학<textarea name="philosophy" rows="2" maxlength="500"></textarea></label>
+          <label>경력 (한 줄에 하나씩)<textarea name="career" rows="4" maxlength="1500"></textarea></label>
+          <label>희망 과목 선택지 (쉼표로 구분)<input name="subjects" placeholder="보컬, 피아노, 작곡"></label>
+          <h3>레슨 안내</h3>
+          <div id="lessonRows"></div>
+          <p><button type="button" id="addLessonRow" class="btn small ghost">+ 레슨 추가</button></p>
+          <h3>문의 채널</h3>
+          <label>카카오톡 링크<input name="kakao" type="url" placeholder="https://open.kakao.com/..."></label>
+          <label>이메일<input name="email" type="email"></label>
+          <label>전화<input name="phone"></label>
+          <div><button class="btn">저장</button></div>
+          <p id="siteMsg" class="muted" role="status"></p>
+        </form>
+      </section>
+
+      <section id="tab-settings" hidden>
+        <h3>수강 신청 영역</h3>
+        <label class="check" style="font-size:1rem"><input type="checkbox" id="applyEnabled"> 홈페이지에서 레슨 신청·상담 영역을 보이고 신청을 받습니다</label>
+        <p class="muted">끄면 홈페이지의 신청 폼과 '레슨 신청' 버튼이 숨겨지고, 서버에서도 새 신청을 받지 않습니다.</p>
+        <h3>레슨 안내 영역</h3>
+        <p><label class="check" style="font-size:1rem"><input type="checkbox" id="showLessons"> 홈페이지에 '레슨 안내' 영역 표시</label></p>
+        <p class="muted">레슨 내용은 '사이트 정보' 탭에서 편집합니다. 끄거나 등록된 레슨이 없으면 영역과 상단 메뉴가 사라집니다.</p>
+        <h3>공지 · 수강 후기 영역</h3>
+        <p><label class="check" style="font-size:1rem"><input type="checkbox" id="showNotices"> 홈페이지에 '공지' 영역 표시</label></p>
+        <p><label class="check" style="font-size:1rem"><input type="checkbox" id="showReviews"> 홈페이지에 '수강 후기' 영역 표시</label></p>
+        <p class="muted">끄거나, 공개된 글이 하나도 없으면 영역 제목까지 홈페이지에서 사라집니다. (공지·후기 탭에서 글 단위로도 공개 여부를 정합니다.)</p>
+        <p id="settingsMsg" class="muted" role="status"></p>
+      </section>
+
+      <section id="tab-schedule" hidden>
+        <form id="lessonForm" class="form" style="max-width:none;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+          <h4 class="panel-title">일정 등록</h4>
+          <label>수강생 *<select name="student_id" id="lessonStudent" required></select></label>
+          <label>날짜 *<input type="date" name="date" required></label>
+          <label>시작 *<input type="time" name="time" required></label>
+          <label>길이(분)<input type="number" name="minutes" value="50" min="10" step="5"></label>
+          <label>유형<select name="kind"><option value="regular">정기</option><option value="once">일회성</option><option value="trial">체험</option></select></label>
+          <label>반복(주)<input type="number" name="weeks" value="1" min="1" max="52"></label>
+          <label>장소<input name="location"></label>
+          <div style="align-self:end"><button class="btn">일정 등록</button></div>
+        </form>
+        <p class="views" id="viewSwitch">
+          <button type="button" data-view="month" class="on">월간 캘린더</button>
+          <button type="button" data-view="list">주간 목록</button>
+        </p>
+        <div id="calView">
+          <p>
+            <button id="monthPrev" class="btn small ghost">◀ 이전 달</button>
+            <strong id="monthLabel"></strong>
+            <button id="monthNext" class="btn small ghost">다음 달 ▶</button>
+            <button id="monthToday" class="btn small ghost">이번 달</button>
+          </p>
+          <div class="scroll"><div id="monthGrid" class="cal"></div></div>
+          <div id="dayPanel" class="card" hidden>
+            <h3 id="dayTitle"></h3>
+            <div class="scroll"><table>
+              <thead><tr><th>시간</th><th>수강생</th><th>유형</th><th>장소</th><th>출결</th></tr></thead>
+              <tbody id="dayBody"></tbody></table></div>
+            <p><button id="dayAdd" class="btn small">이 날짜에 일정 등록</button>
+               <button id="dayWeek" class="btn small ghost">이 주 목록 보기(보강·삭제)</button></p>
+          </div>
+          <p class="muted">날짜를 누르면 그날의 수강 내역이 아래에 표시됩니다.</p>
+        </div>
+        <div id="listView" hidden>
+        <p>
+          <button id="weekPrev" class="btn small ghost">◀ 이전 주</button>
+          <strong id="weekLabel"></strong>
+          <button id="weekNext" class="btn small ghost">다음 주 ▶</button>
+          <button id="weekToday" class="btn small ghost">이번 주</button>
+        </p>
+        <div class="scroll"><table>
+          <thead><tr><th>일시</th><th>수강생</th><th>유형</th><th>장소</th><th>출결</th><th></th></tr></thead>
+          <tbody id="lessonBody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="tab-inquiries"><div class="scroll"><table>
+        <thead><tr><th>접수일</th><th>유형</th><th>이름</th><th>연락처</th><th>과목/수준</th><th>가능 시간</th><th>문의</th><th>상태</th><th></th></tr></thead>
+        <tbody id="inqBody"></tbody></table></div></section>
+
+      <section id="tab-students" hidden>
+        <form id="studentForm" class="form" style="max-width:none;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+          <h4 class="panel-title">수강생 등록 · 수정</h4>
+          <input type="hidden" name="id">
+          <label>이름 *<input name="name" required></label>
+          <label>연락처<input name="phone"></label>
+          <label>이메일<input name="email" type="email"></label>
+          <label>보호자 이름<input name="guardian_name"></label>
+          <label>보호자 연락처<input name="guardian_phone"></label>
+          <label>과목<input name="subject"></label>
+          <label>수준<input name="level"></label>
+          <label>목표<input name="goal"></label>
+          <label>유입 경로<input name="source"></label>
+          <label>상태<select name="status"><option value="active">수강</option><option value="paused">휴강</option><option value="left">퇴원</option></select></label>
+          <label style="grid-column:1/-1">특이사항<textarea name="notes" rows="2"></textarea></label>
+          <div><button class="btn">저장</button> <button type="button" id="studentReset" class="btn ghost">새로 입력</button></div>
+        </form>
+        <div id="schoolPanel" class="card" hidden style="margin-bottom:16px">
+          <h3 id="schoolTitle"></h3>
+          <form id="schoolForm" class="form" style="max-width:none;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+            <label>학교 *<input name="school_name" required></label>
+            <label>학년 *<input name="grade" required placeholder="예: 중2, 고3"></label>
+            <label>적용 시작일<input type="date" name="started_on"></label>
+            <div style="align-self:end"><button class="btn">학교·학년 변경 저장</button> <button type="button" id="schoolClose" class="btn ghost">닫기</button></div>
+          </form>
+          <p class="muted">저장하면 기존 '현재' 기록은 시작일 전날로 종료되고 이력에 남습니다.</p>
+          <table><thead><tr><th>학교</th><th>학년</th><th>기간</th></tr></thead><tbody id="schoolHistory"></tbody></table>
+        </div>
+        <p><label style="display:inline-flex;gap:6px;font-weight:400"><input type="checkbox" id="showLeft"> 퇴원 포함</label></p>
+        <h4 class="list-title">수강생 목록</h4>
+        <div class="scroll"><table>
+          <thead><tr><th>이름</th><th>학교/학년</th><th>연락처</th><th>보호자</th><th>과목/수준</th><th>목표</th><th>상태</th><th></th></tr></thead>
+          <tbody id="stuBody"></tbody></table></div>
+      </section>
+    </div>
+    <p id="err" class="muted"></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/profile.js"></script>
+  <script src="content.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
