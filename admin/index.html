@@ -5,19 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>레슨 관리</title>
   <link rel="stylesheet" href="../css/style.css?v=4">
-  <link rel="stylesheet" href="../css/admin.css?v=2">
+  <link rel="stylesheet" href="../css/admin.css?v=3">
 </head>
 <body>
-  <header class="nav"><strong id="brand">레슨 관리</strong><span><span id="who" class="muted"></span> <button id="logout" class="btn small ghost" hidden>로그아웃</button></span></header>
+  <header class="nav"><strong id="brand">레슨 관리</strong><span><span id="who" class="muted"></span> <button id="changePw" class="btn small ghost" hidden>비밀번호 변경</button> <button id="logout" class="btn small ghost" hidden>로그아웃</button></span></header>
 
   <main class="wrap">
     <form id="login" class="form" hidden>
       <h2>로그인</h2>
       <label>이메일<input type="email" name="email" required autocomplete="username"></label>
       <label>비밀번호<input type="password" name="password" required autocomplete="current-password"></label>
-      <div><button class="btn">로그인</button> <button type="button" id="signup" class="btn ghost">새 아티스트 가입</button></div>
+      <div><button class="btn">로그인</button> <button type="button" id="signup" class="btn ghost">새 아티스트 가입</button> <button type="button" id="forgot" class="btn small ghost">비밀번호 찾기</button></div>
       <p class="muted">처음이라면 이메일과 비밀번호(6자 이상)를 입력하고 '새 아티스트 가입'을 누르세요. 가입 후 나만의 홈페이지 주소를 만들 수 있습니다.</p>
       <p id="loginMsg" class="muted" role="status"></p>
+    </form>
+
+    <form id="recovery" class="form" hidden>
+      <h2>새 비밀번호 설정</h2>
+      <label>새 비밀번호 (6자 이상)<input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+      <label>새 비밀번호 확인<input type="password" name="confirm" required minlength="6" autocomplete="new-password"></label>
+      <button class="btn">비밀번호 변경</button>
+      <p id="recoveryMsg" class="muted" role="status"></p>
+    </form>
+
+    <form id="changePwForm" class="form card" hidden style="max-width:420px;margin:0 auto 20px">
+      <h3 style="margin:0">비밀번호 변경</h3>
+      <label>새 비밀번호 (6자 이상)<input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
+      <label>새 비밀번호 확인<input type="password" name="confirm" required minlength="6" autocomplete="new-password"></label>
+      <div><button class="btn">변경</button> <button type="button" id="changePwCancel" class="btn ghost">취소</button></div>
+      <p id="changePwMsg" class="muted" role="status"></p>
     </form>
 
     <form id="onboard" class="form" hidden>

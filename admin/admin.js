@@ -16,8 +16,20 @@
   const INQ_STATUS = { new: "신규", contacted: "연락함", enrolled: "등록", closed: "종료" };
   const STU_STATUS = { active: "수강", paused: "휴강", left: "퇴원" };
 
+  // 비밀번호 재설정 메일 링크로 들어온 경우: 새 비밀번호 입력 화면만 보여준다
+  let recoveryMode = /type=recovery/.test(location.hash);
+  function showRecovery() {
+    recoveryMode = true;
+    ["login", "app", "onboard", "pendingBox", "platformBox", "changePwForm"].forEach((id) => ($(id).hidden = true));
+    $("logout").hidden = true; $("changePw").hidden = true;
+    $("recovery").hidden = false;
+  }
+  db.auth.onAuthStateChange((event) => { if (event === "PASSWORD_RECOVERY") showRecovery(); });
+
   async function boot() {
+    if (recoveryMode) return showRecovery();
     const { data: { session } } = await db.auth.getSession();
+    $("changePw").hidden = !session;
     $("login").hidden = !!session;
     $("app").hidden = !session;
     $("logout").hidden = !session;
@@ -75,6 +87,41 @@
         el("td", {}, el("span", { className: "badge", textContent: ST[a.status] })), el("td", {}, ...buttons));
     }));
   }
+
+  // 비밀번호 찾기: 입력한 이메일로 재설정 링크 발송
+  $("forgot").addEventListener("click", async () => {
+    const email = $("login").elements.email.value.trim();
+    if (!email) return ($("loginMsg").textContent = "위 이메일 칸에 가입한 이메일을 입력한 뒤 다시 눌러 주세요.");
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+    $("loginMsg").textContent = error ? "발송 실패: " + error.message : "재설정 메일을 보냈습니다. 메일의 링크를 눌러 새 비밀번호를 설정하세요. (메일이 오지 않으면 스팸함도 확인해 주세요.)";
+  });
+
+  // 새 비밀번호 저장 (재설정 링크 / 로그인 후 변경 공통)
+  async function savePassword(form, msg) {
+    const d = Object.fromEntries(new FormData(form));
+    if (d.password !== d.confirm) { msg.textContent = "비밀번호가 서로 다릅니다."; return false; }
+    const { error } = await db.auth.updateUser({ password: d.password });
+    if (error) { msg.textContent = "변경 실패: " + error.message; return false; }
+    form.reset(); msg.textContent = "";
+    return true;
+  }
+  $("recovery").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!(await savePassword(e.target, $("recoveryMsg")))) return;
+    recoveryMode = false;
+    history.replaceState(null, "", location.pathname);   // 주소창의 토큰 제거
+    $("recovery").hidden = true;
+    alert("비밀번호가 변경되었습니다.");
+    boot();
+  });
+  $("changePw").addEventListener("click", () => { $("changePwForm").hidden = !$("changePwForm").hidden; });
+  $("changePwCancel").addEventListener("click", () => { $("changePwForm").hidden = true; $("changePwMsg").textContent = ""; });
+  $("changePwForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!(await savePassword(e.target, $("changePwMsg")))) return;
+    $("changePwForm").hidden = true;
+    alert("비밀번호가 변경되었습니다.");
+  });
 
   $("signup").addEventListener("click", async () => {
     const f = $("login");
